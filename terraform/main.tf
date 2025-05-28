@@ -67,6 +67,7 @@ resource "aws_route_table_association" "public_subnet_asso" {
 
 
 // --- ZIP files ---
+/*
 data "archive_file" "wd" {
   type = "zip"
 
@@ -80,7 +81,7 @@ data "archive_file" "alo" {
   source_dir = "./../word_dictionary"
   output_path = "./zip/word_dictionary.zip"
 }
-
+*/
 
 
 
@@ -123,15 +124,29 @@ resource "aws_security_group" "my-sg" {
 }
 
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
 
 resource "aws_instance" "project_server" {
   depends_on = [aws_security_group.my-sg, aws_subnet.public_subnets]
-  ami = "ami-0e86e20dae9224db8" # Amazon Ubuntu AMI
-  instance_type = "t2.micro"
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
   count = length(var.public_subnet_cidrs)
   subnet_id = element(aws_subnet.public_subnets[*].id, count.index)
   associate_public_ip_address = true
-  key_name = "terraform-kp"
   vpc_security_group_ids = [aws_security_group.my-sg.id]
 }
 
