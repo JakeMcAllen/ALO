@@ -1,4 +1,5 @@
 terraform/.terraform/
+terraform/zip/
 aao/.next/
 aao/node_modules
 word_dictionary/venv
