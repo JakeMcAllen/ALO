@@ -1,6 +1,7 @@
-terraform/.terraform/
-terraform/
-terraform/zip/
-aao/.next/
+terraform/.terraform
+wd
+
+aao/.next
 aao/node_modules
-word_dictionary/venv
+
+AAO-eu-west-1.ppk
