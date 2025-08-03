@@ -421,25 +421,25 @@ export default function LessonPage({ itmID }: { itmID: number }) {
                             <CircularProgress />
                         ) :
                         buyLessonFlag ? 
-                        <Card variant="outlined" style={{padding: "30px", borderRadius: "15px", backgroundColor: "#eee"}}>
-                            <Grid2
-                                container
-                                direction="column"
-                                sx={{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Typography>Buy lesson</Typography>
-                                <Typography>Price: {price}</Typography>
-                                <Button onClick={buyLesson}>BUY now</Button>
-                                {buyErrorFlag && (
-                                    <Typography style={{backgroundColor: "red", padding: "10px", margin: "10px", borderRadius: "10px", color: "white"}}>
-                                        ERROR !!! Not enough founds
-                                    </Typography>
-                                )}
-                            </Grid2>
-                        </Card>
+                            <Card variant="outlined" style={{padding: "30px", borderRadius: "15px", backgroundColor: "#eee"}}>
+                                <Grid2
+                                    container
+                                    direction="column"
+                                    sx={{
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <Typography>Buy lesson</Typography>
+                                    <Typography>Price: {price}</Typography>
+                                    <Button onClick={buyLesson}>BUY now</Button>
+                                    {buyErrorFlag && (
+                                        <Typography style={{backgroundColor: "red", padding: "10px", margin: "10px", borderRadius: "10px", color: "white"}}>
+                                            ERROR !!! Not enough founds
+                                        </Typography>
+                                    )}
+                                </Grid2>
+                            </Card>
                         : (
                             articles.map((obj_to_disp: any, index: number) => (
                                 obj_to_disp.Type === 0 ?
