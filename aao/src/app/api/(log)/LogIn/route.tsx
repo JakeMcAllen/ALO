@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         if (E_Mail === undefined || E_Mail === "" || password === undefined || password === "") return NextResponse.json({ message: "Error", error: "Lack same info" }, {status: 500});
 
         const db = await createConnection();
-        const sql = 'select * from user where Mail="' + E_Mail + '" and password="' + password + '" ;'
+        const sql = 'select * from User where Mail="' + E_Mail + '" and password="' + password + '" ;'
         // console.log(sql);
 
         const [user] = await db.query(sql); 

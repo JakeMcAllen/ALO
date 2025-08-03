@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
 
         const db = await createConnection();
-        let sql = 'Select idLesson from lesson where Title LIKE "%' + Title + '%" OR Description LIKE "%' + descriptionVal + '%" LIMIT 10; ';
+        let sql = 'Select idLesson, "ls" as type from Lesson where Title LIKE "%' + Title + '%" OR Description LIKE "%' + descriptionVal + '%" LIMIT 10; ';
         console.log(sql);
         
         const [cartIDList] = await db.query(sql);

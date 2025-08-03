@@ -18,12 +18,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 import SearchBox from "@/components/search/search"
 import Link from 'next/link';
 import { getCookie } from 'cookies-next';
+import Tokens from '../Tokens/Tokens';
 
 
 // let pages = ['shop', 'Hotel', 'AboutUs', 'Arreda', 'search', 'Preferiti'];
 // const pagesV2 = ['shop', 'Hotel', 'AboutUs', 'Preferiti', 'cart'];
 let pages = ['shop', 'AboutUs', 'search', 'Preferiti'];
-const pagesV2 = ['shop', 'AboutUs', 'Preferiti', 'cart'];
+const pagesV2 = ['shop', 'AboutUs', 'Preferiti', 'chat']; // cart
 
 const settings = ['Account', 'Setting', 'UploadImg', 'CreateLesson'];
 
@@ -188,6 +189,7 @@ function ResponsiveAppBar() {
           </Box>
 
           <SearchBox />
+          <Tokens />
 
           <Box sx={{ flexGrow: 0 }}>
             {idUserTemp == -1 ?

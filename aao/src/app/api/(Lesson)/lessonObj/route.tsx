@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
 
         const db = await createConnection();
-        const sql = 'select ObjOrder, ArticleID, IMG_ID from lesson_obj where LessonID= ' + LessonID; 
+        const sql = 'select ObjOrder, ArticleID, IMG_ID from Lesson_OBJ where LessonID= ' + LessonID; 
         console.log(sql)
         const [lesson_objs] = await db.query(sql);
 

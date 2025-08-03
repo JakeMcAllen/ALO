@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
  * @param param0 categoryID identify the current category. If undefined all category
  * @returns 
  */
-export function ProductShow({categoryName} : {categoryName?: string | undefined}) {
+export function ProductShow({categoryName, currentLessonID, profLessonID} : {categoryName?: string | undefined, currentLessonID?: number, profLessonID?: number}) {
 
     const [ids, setIDS] = useState<number[]>([]);
     const [pag, setPag] = useState<number>(0);
@@ -21,14 +21,6 @@ export function ProductShow({categoryName} : {categoryName?: string | undefined}
     const [pagMax, setPagMax] = useState<number[]>([]);
 
 
-
-    // const [numbers, setNumbers] = useState(() => {
-    //     const newNumbers = [];
-    //     for (let i = 1; i <= pagMax; i++) { newNumbers.push(i); }
-    //     return newNumbers;
-    // });
-    
-    
 
     const fd_loop = (max_vals: number) => {
         const newNumbers = [];
@@ -40,19 +32,13 @@ export function ProductShow({categoryName} : {categoryName?: string | undefined}
 
     const fetchData = async (pagSt: number) => {
 
-        // Get number of ids
-        // TODO: categoryName test
         if (categoryName) {
+
             try {
                 const json1 = JSON.stringify({ "category": categoryName, "onlyIDs": true, pag: pagSt == 0 ? 0 : pag, lesson4Page: 9 });
-                const response1 = await axios.post('/api/lessonByCategory', json1, {
-                    headers: { 'Content-Type': 'application/json', },
-                });
+                const response1 = await axios.post('/api/lessonByCategory', json1, { headers: { 'Content-Type': 'application/json', }, });
             
                 if (response1.status === 200) {
-                    // TODO: To check
-                    console.log(response1.data.lessonIDList);
-                    
                     setIDS(ids.concat(response1.data.lessonIDList))
                     setPagMax(fd_loop(response1.data.pags))
 
@@ -63,19 +49,21 @@ export function ProductShow({categoryName} : {categoryName?: string | undefined}
         } else {
 
             try {
-                const json = JSON.stringify({ pag: pagSt == 0 ? 0 : pag, lesson4Page: 9 });
-                const response = await axios.post('/api/lessonIDList', json, {
-                    headers: { 'Content-Type': 'application/json', },
-                });
-            
-                if (response.status === 200) {
-                    // console.log(response.data.lessonIDList);
+                const json = JSON.stringify({ pag: pagSt == 0 ? 0 : pag, lesson4Page: 9, profLessonID: profLessonID });
+                const response = await axios.post('/api/lessonIDList', json, { headers: { 'Content-Type': 'application/json' }, });
 
-                    setIDS(ids.concat(response.data.lessonIDList))
-                    setPagMax(fd_loop(response.data.pags))
-                    setPag(pag +1)                                
-                } else { console.error('Failed to send message'); }
-            } catch (error) { console.error('Error sending message:', error); }
+                if (response.status === 200) {
+                    const newLessonIDList = response.data.lessonIDList.filter((item: any) => item.idLesson !== Number(currentLessonID));
+                    
+                    setIDS(ids.concat(newLessonIDList));
+                    setPagMax(fd_loop(response.data.pags));
+                    setPag(pag + 1);
+                } else {
+                    console.error('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
 
         }
 
@@ -88,7 +76,14 @@ export function ProductShow({categoryName} : {categoryName?: string | undefined}
 
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Grid2 container
+                direction="column"
+                sx={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+                style={{marginTop: "80px"}}
+            >
             <Grid2 container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                 {ids.map((id: any, index: number) => (
                     <Grid2 key={index} size={{ xs: 2, sm: 4, md: 4 }}>
@@ -116,6 +111,6 @@ export function ProductShow({categoryName} : {categoryName?: string | undefined}
                     ))}
                 </Button>
             </Grid2>
-        </Box>
+        </Grid2>
     )
 }

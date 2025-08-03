@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         const password = res.Password
 
         const db = await createConnection();
-        const sql = 'INSERT INTO user (Name, Surname, Mail, password) VALUES ("' + name + '", "' + lastName + '", "' + E_Mail + '", "' + password + '" );'
+        const sql = 'INSERT INTO User (Name, Surname, Mail, password) VALUES ("' + name + '", "' + lastName + '", "' + E_Mail + '", "' + password + '" );'
         console.log(sql);
         
         await db.query(sql); 

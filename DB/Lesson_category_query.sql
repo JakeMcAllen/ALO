@@ -1,5 +1,5 @@
-INSERT INTO category (Name, Description) VALUES ("Englesh", "English lesson");
-INSERT INTO category (Name, Description) VALUES ("Italiano", "Lezioni di italiano");
+INSERT INTO Category (Name, Description) VALUES ("Englesh", "English Lesson");
+INSERT INTO Category (Name, Description) VALUES ("Italiano", "Lezioni di italiano");
 
 select * from category;
 

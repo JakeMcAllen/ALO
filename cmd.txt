@@ -1,2 +1,4 @@
 venv/Scripts/activate  
 python main.py
+
+aws sso login --profile PcGio

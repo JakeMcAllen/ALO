@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
         const db = await createConnection();
         const sql = 'select a.ArticleID, a.Title, a.Content, l.ObjOrder ' +
-                    'from article as a LEFT JOIN lesson_obj as l on a.ArticleID = l.ArticleID ' +
+                    'from Article as a LEFT JOIN Lesson_OBJ as l on a.ArticleID = l.ArticleID ' +
                     'WHERE l.LessonID = ' + LessonID + ' ORDER BY l.ObjOrder'; 
         console.log(sql)
         const [lesson_objs] = await db.query(sql);

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         let sql = 'Select ' + (onlyIDs ? 'idLesson' : '*') + 
             ' from lesson ' + 
             (lesson.toLowerCase() === "altro" ? "" :
-                'where lesson in (select idlesson from lesson where Name="' + lesson + '" ) ' 
+                'where lesson in (select idlesson from Lesson where Name="' + lesson + '" ) ' 
             ) + 
             'limit ' + lesson4Page + ' offset ' + pag + ' ; ';
         console.log(sql);
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
 
 
         const sql1 = 'Select ROUND(count(*)/ ' + f4p.toString() + ' , 0) as pags ' + 
-            ' from lesson ' + 
+            ' from Lesson ' + 
             (lesson.toLowerCase() === "altro" ? "" :
-                'where lesson in (select idlesson from lesson where Name="' + lesson + '" ) ' 
+                'where lesson in (select idlesson from Lesson where Name="' + lesson + '" ) ' 
             ) 
         console.log(sql1);
         

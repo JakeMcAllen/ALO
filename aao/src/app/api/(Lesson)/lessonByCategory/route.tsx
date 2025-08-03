@@ -18,9 +18,9 @@ export async function POST(req: Request) {
         const db = await createConnection();
         
         let sql = 'Select ' + (onlyIDs ? 'idLesson' : '*') + 
-            ' from lesson ' + 
+            ' from Lesson ' + 
             (category.toLowerCase() === "altro" ? "" :
-                'where Category in (select idCategory from category where Name="' + category + '" ) ' 
+                'where Category in (select idCategory from Category where Name="' + category + '" ) ' 
             ) + 
             'limit ' + lesson4Page + ' offset ' + pag + ' ; ';
         console.log(sql);
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
 
 
         const sql1 = 'Select ROUND(count(*)/ ' + f4p.toString() + ' , 0) as pags ' + 
-            ' from lesson ' + 
+            ' from Lesson ' + 
             (category.toLowerCase() === "altro" ? "" :
-                'where Category in (select idCategory from category where Name="' + category + '" ) ' 
+                'where Category in (select idCategory from Category where Name="' + category + '" ) ' 
             ) 
         console.log(sql1);
         

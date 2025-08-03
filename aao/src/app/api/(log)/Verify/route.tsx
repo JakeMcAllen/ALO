@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         const userID = res.userID
 
         const db = await createConnection();
-        const sql = 'select * from user where idUser = ' + userID + ' ;'
+        const sql = 'select * from User where idUser = ' + userID + ' ;'
         console.log(sql);
                 
         const user = await db.query(sql); 

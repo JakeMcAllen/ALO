@@ -18,7 +18,7 @@ export default function HomePage() {
 
     return (
       <div>
-        <Typography variant="h2">Benvenuto in Allena Arredamenti Online:</Typography>
+        <Typography variant="h2">Benvenuto in Allena Lessons Online:</Typography>
         <Grid2
           container
           direction="row"

@@ -1,19 +1,42 @@
-// import wordnet from "wordnet";
-const wordnet = require('wordnet-db');
-console.log("wndb.path");
-console.log(wordnet.path);
-
-
-
+import axios from 'axios';
 
 
 export const findRelatedWords = async (inputWord) => {
-  let resp =  await wordnet.lookup(inputWord.toLowerCase());
   console.log("respresprespresp");
-  console.log(resp);
+  console.log(inputWord);
+  console.log("Input Word Type:", typeof inputWord);
+  console.log("Input Word Value:", inputWord);
   console.log("---------");
   
   
+  const API_GATEWAY_URL = process.env.LAMBDA_API_GATEWAY_URL;
+  console.log("API_GATEWAY_URL");
+  console.log(API_GATEWAY_URL);
+  if (!API_GATEWAY_URL) { return "No word" }
+
+
+
+
+  try {
+    // Esegui una richiesta GET all'API Gateway
+    const response = await axios.post(API_GATEWAY_URL, {"word": inputWord});
+
+    console.log("response")
+    // console.log(response)
+    const { data } = response;
+
+    // console.log(data.word)
+    // console.log(data.definition)
+    return data.definition
+
+  } catch (error) {
+    console.error('Error connecting to API Gateway:', error);
+    // Gestione degli errori, ad esempio errori di rete, errori 4xx/5xx dall'API Gateway
+    return "No word"
+  }
+
+
+
 
 
   // // Itera attraverso tutte le definizioni (synsets) trovate per la parola

@@ -7,7 +7,7 @@ import { NextResponse } from "next/server"
 export async function GET() {
     try {
         const db = await createConnection();
-        const sql = "Select idLesson from lesson"
+        const sql = "Select idLesson from Lesson"
         console.log(sql);
         
         const [lessonIDList] = await db.query(sql)        
@@ -26,13 +26,20 @@ export async function POST(req: Request) {
         const f4p: number = res.lesson4Page === undefined ? Number(process.env.DEFAULT_lesson_4_PAGE) : res.lesson4Page;
         const pag = res.pag === undefined ? 0 : Number(res.pag) * f4p;
         const lesson4Page = res.lesson4Page === undefined ? f4p : Number(res.lesson4Page)
+        const profLessonID = res.profLessonID
+
+
+        console.log("\n\n\n\\1n1n1n1n1n1, ", profLessonID);
+        
+
         
         const db = await createConnection();
-        const sql = 'SELECT idLesson from lesson limit ' + lesson4Page + ' offset ' + pag; 
+        let sql = 'SELECT idLesson from Lesson limit ' + lesson4Page + ' offset ' + pag; 
+        if (profLessonID) sql = 'SELECT idLesson from Lesson WHERE idLesson in (SELECT Lesson_idLesson FROM lesson_has_user where User_idUser = ' + profLessonID + ') limit ' + lesson4Page + ' offset ' + pag;
         console.log(sql)
         const [lessonIDList] = await db.query(sql);
 
-        const sql1 = 'Select ROUND(count(*)/ ' + f4p.toString() + ' , 0) as pags from lesson;';
+        const sql1 = 'Select ROUND(count(*)/ ' + f4p.toString() + ' , 0) as pags from Lesson;';
         const [pags] = await db.query(sql1);
         console.log(pags[0].pags);
         

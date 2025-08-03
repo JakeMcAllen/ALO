@@ -3,4 +3,6 @@ export interface Article_interface {
   Title: string;
   Content: string;
   ObjOrder: number;
+  
+  Variant: number;
 }

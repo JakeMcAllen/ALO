@@ -10,7 +10,7 @@ export async function GET() {
         console.log("1");
         
         const db = await createConnection();
-        const sql = 'select * from category'; 
+        const sql = 'select * from Category'; 
         console.log("1");
         console.log(sql);
         

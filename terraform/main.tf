@@ -1,5 +1,5 @@
 provider "aws" {
-    region = var.aws_region
+  region = var.aws_region
 }
 
 
@@ -17,7 +17,7 @@ resource "aws_vpc" "main_VPC" {
   }
 }
 
-// SubNetwork
+// SubNetwork 
 resource "aws_subnet" "public_subnets" {
  count             = length(var.public_subnet_cidrs)
  vpc_id            = aws_vpc.main_VPC.id
@@ -191,100 +191,108 @@ resource "aws_api_gateway_stage" "wd_stage" {
   stage_name    = "dev"
 }
 
-# --- Output URL ---
-output "api_gateway_url" {
-  description = "L'URL dell'API Gateway per l'endpoint /wd"
-  value       = "${aws_api_gateway_stage.wd_stage.invoke_url}/${aws_api_gateway_resource.wd_resource.path_part}"
-}
-
-
-
 
 
 
 # -----------------------------------------------------------------------------
-# EC2
+# RDS
 # -----------------------------------------------------------------------------
-resource "aws_security_group" "my-sg" {
-  vpc_id = aws_vpc.main_VPC.id
-  name = "my security group"
-  description = "my security group"
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-security-group"
+  description = "Allow inbound traffic to RDS"
+  vpc_id      = aws_vpc.main_VPC.id
+
+  # --- Regola per accesso da MySQL Dashboard (locale) ---
   ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow traffic from anywhere
+    description = "Allow MySQL/PostgreSQL from my local IP"
+    from_port   = var.db_port
+    to_port     = var.db_port
+    protocol    = "tcp"
+    cidr_blocks = [var.my_ip]
   }
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "SSH"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "my-sg"
-  }
-}
-
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"] # Permetti tutto il traffico in uscita
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+
+
+
+
+  // TODO: To delete
+  ingress {
+    description = "ALLOW ALL for testing"
+    from_port   = var.db_port
+    to_port     = var.db_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # APRE LA PORTA A TUTTI
   }
-
-  owners = ["099720109477"] # Canonical
-}
-
-
-resource "aws_instance" "project_server" {
-  depends_on                  = [aws_security_group.my-sg, aws_subnet.public_subnets]
-  ami                         = data.aws_ami.ubuntu.id
-  instance_type               = "t3.micro"
-  count                       = length(var.public_subnet_cidrs)
-  subnet_id                   = element(aws_subnet.public_subnets[*].id, count.index)
-  associate_public_ip_address = true
-  key_name                    = var.key_name_value
-  vpc_security_group_ids      = [aws_security_group.my-sg.id]
-
-  user_data = <<-EOF
-    #!/bin/bash
-    sudo apt update -y
-    sudo apt upgrade -y
-    sudo apt install -y nodejs npm
-    sudo apt install -y nodejs
-    sudo apt install -y git
-    sudo apt install -y pm2
-    
-    mkdir ALO
-    cd ALO/aao/
-
-  EOF
-
 
   tags = {
-    Name = "ALO-server"
+    Name = "RDS-Security-Group"
   }
 }
+
+
+# DB Subnet Group per RDS
+# RDS richiede che il DB subnet group copra almeno due Availability Zones.
+# Utilizzeremo le subnet private che hai già definito.
+resource "aws_db_subnet_group" "main_db_subnet_group" {
+  name          = "main-db-subnet-group"
+  # Utilizza gli ID delle subnet private che hai creato
+  subnet_ids    = aws_subnet.public_subnets[*].id
+  description   = "A group of subnets for RDS"
+
+  tags = {
+    Name = "Main DB Subnet Group"
+  }
+}
+
+# Parametro Group per RDS (opzionale, ma utile per configurazioni avanzate)
+resource "aws_db_parameter_group" "rds_param_group" {
+  name   = "rds-custom-parameter-group"
+  family = "mysql8.0" # O il motore del tuo database (es. postgres14)
+
+  parameter {
+    name  = "character_set_server"
+    value = "utf8mb4"
+  }
+
+  parameter {
+    name  = "collation_server"
+    value = "utf8mb4_unicode_ci"
+  }
+
+  tags = {
+    Name = "RDS Custom Parameter Group"
+  }
+}
+
+# Istanza RDS
+resource "aws_db_instance" "main_db_instance" {
+  allocated_storage           = 20
+  identifier                  = "alo-db"
+  engine                      = "mysql" # O il motore del tuo database (es. postgres)
+  engine_version              = "8.0.35" # Assicurati che la versione sia compatibile
+  instance_class              = "db.t3.micro"
+  username                    = var.db_username
+  password                    = var.db_password
+  parameter_group_name        = aws_db_parameter_group.rds_param_group.name
+  skip_final_snapshot         = true # NON usare in produzione, solo per sviluppo/test
+  
+  # Associa l'istanza RDS al DB Subnet Group e al Security Group RDS
+  db_subnet_group_name        = aws_db_subnet_group.main_db_subnet_group.name
+  vpc_security_group_ids      = [aws_security_group.rds_sg.id]
+  
+  # Le istanze RDS in un DB Subnet Group sono private per default, ma puoi renderle pubbliche per test
+  # NON renderle pubbliche in produzione se non strettamente necessario e con altre misure di sicurezza
+  publicly_accessible         = true 
+
+  tags = {
+    Name = "ALO-DB-Instance"
+  }
+}
+

@@ -10,7 +10,7 @@ export async function POST(req: Request) {
         const idLesson = res.idLesson
 
         const db = await createConnection();
-        const sql = 'Select * from lesson where idLesson = ' + idLesson; 
+        const sql = 'Select * from Lesson where idLesson = ' + idLesson; 
         console.log(sql);
         
         const lesson = await db.query(sql);

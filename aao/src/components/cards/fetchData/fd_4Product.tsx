@@ -1,3 +1,5 @@
+"use client"
+
 import axios from "axios";
 import { Dispatch, SetStateAction } from "react";
 
@@ -12,7 +14,9 @@ export async function fetchData_forLesson (
     setName: Dispatch<React.SetStateAction<String>>,
     setPrice: Dispatch<React.SetStateAction<number>>, 
     setDescription: Dispatch<React.SetStateAction<String>>,
-    setDT: Dispatch<React.SetStateAction<string | undefined>>
+    setDT: Dispatch<React.SetStateAction<string | undefined>>,
+    setIsComplete: Dispatch<React.SetStateAction<boolean>>,
+    GetImg: (imgID_local: number) => void
 ) {
     
     setIsLoading(true)
@@ -33,32 +37,33 @@ export async function fetchData_forLesson (
             setPrice(0)
             setDescription(fnt.Description)
 
+            if (fnt.MainIMG) GetImg(fnt.MainIMG)
 
-            // TODO: imgs to fix
-            // let json = JSON.stringify({ "idFurniture": idF });
-            // const responseImg = await axios.post('/api/GetImg', json, { headers: { 'Content-Type': 'application/json', }, });
-        
+            console.log("\n\n\n\n\nn\n\n\n\n\: ", fnt);
+            
+            
+            const json1 = JSON.stringify({ "idLesson": idF, "UserID": 1 });
+            console.log("json1: ", json1);
+            
+            const response1 = await axios.post('/api/GetUsers_progress_on_lesson', json1, { headers: { 'Content-Type': 'application/json', }, });
 
-            // // Funzione per convertire il Buffer in base64
-            // const byteArrayToBase64 = (byteArray: number[]): string => {
-            //     const buffer = Buffer.from(byteArray); // Crea un Buffer dai byte
-            //     return `data:image/jpeg;base64,${buffer.toString('base64')}`; // Converte in base64
-            // };
-
-
-            // if (responseImg.status === 200) {
-            //     console.log('Message Images');
-
-            //     if (responseImg.data.ImgBytes[0]) {
+            
+            if (response1.status === 200) {           
+                console.log("response1: ", response1);
                 
-            //         let fnt = responseImg.data.ImgBytes[0].images.data
-            //         console.log(fnt)
 
-            //         setIsPresent(true)
-            //         setDT( byteArrayToBase64(fnt) )
-            //     }
-            // }
+                fnt = response1.data.users_progress_on_lesson[0][0]
+                if (fnt != undefined){
+                    
+                    console.log("response1.data.users_progress_on_lesson: ", response1.data.users_progress_on_lesson.length);
 
+                    // setProgress()
+                    setIsComplete(fnt.Complete)
+                }
+
+
+
+            }
 
 
         } else { console.error('Failed to send message'); }

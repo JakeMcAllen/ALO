@@ -19,7 +19,7 @@ export default function SearchingPage({params=""} :
 
 
     
-    const fetchData = async ({inVal} : {inVal : string|undefined}) => {
+    const fetchData = async (inVal : string|undefined, apiTerm: string) => {
 
         setIsLoading(true)
         setCategory([])
@@ -33,21 +33,37 @@ export default function SearchingPage({params=""} :
                 descriptionVal: inVal
             });
 
-            const response = await axios.post('/api/searchLesson', json, {
+            const response = await axios.post('/api/' + apiTerm, json, {
                 headers: { 'Content-Type': 'application/json', },
             });
         
             if (response.status === 200) {
-                if (response.data.cartIDList.length == 0) { setHasValues(false) }
-                else {
-                    console.log('Message sent successfully');
-                    
-                    console.log(response.data.cartIDList);
-                    console.log(response.data.cartIDList.length);
-                    
-                    setHasValues(true)
-                    setCategory(response.data.cartIDList)
-                }      
+
+                if (apiTerm == "searchLesson") {
+                    if (response.data.cartIDList.length == 0) { setHasValues(false) }
+                    else {
+                        console.log('Message sent successfully', response.data);
+                        
+                        console.log(response.data.cartIDList);
+                        console.log(response.data.cartIDList.length);
+                        
+                        setHasValues(true)
+                        setCategory(response.data.cartIDList)
+                    }      
+
+                } else {
+                    if (response.data.us.length == 0) { setHasValues(false) }
+                    else {
+                        console.log('Message sent successfully', response.data);
+                        
+                        console.log(response.data.us);
+                        console.log(response.data.us.length);
+                        
+                        setHasValues(true)
+                        setCategory(response.data.us)
+                    }      
+                }
+
             } else { console.error('Failed to send message'); }
         } catch (error) { console.error('Error sending message:', error); }
 
@@ -55,7 +71,10 @@ export default function SearchingPage({params=""} :
     }
 
     
-    useEffect(() => { fetchData({ inVal: params}) }, [])
+    useEffect(() => { 
+        fetchData(params, "searchLesson") 
+        fetchData(params, "searchUser")
+    }, [])
 
 
     return (
@@ -69,7 +88,7 @@ export default function SearchingPage({params=""} :
                     fullWidth 
                     defaultValue={params}
                     value={searchText}
-                    onInput={(event: React.ChangeEvent<HTMLInputElement>) => fetchData({ inVal: event.target.value}) }
+                    onInput={(event: React.ChangeEvent<HTMLInputElement>) => {fetchData(event.target.value, "searchLesson"); fetchData(event.target.value, "searchUser");}}
                 />
             </div>
             {hasValues? 

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         
 
         const db = await createConnection();
-        const sql = 'select * from category where Name="' + catName + '"'; 
+        const sql = 'select * from Category where Name="' + catName + '"'; 
         console.log(sql);
 
         const [category] = await db.query(sql);

@@ -10,10 +10,6 @@ export default async function Page({
   }) {
     const itmID = (await params).lessonID
 
-    console.log(itmID);
-    
-
-
   return (
     <div style={{margin: "5%"}}>
         <LessonPage itmID={itmID} />

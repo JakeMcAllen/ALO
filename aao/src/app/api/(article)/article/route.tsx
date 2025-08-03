@@ -10,7 +10,7 @@ export async function POST(req: Request) {
         const ArticleID = res.ArticleID
 
         const db = await createConnection();
-        const sql = 'Select * from article where ArticleID = ' + ArticleID; 
+        const sql = 'Select * from Article where ArticleID = ' + ArticleID; 
         console.log(sql);
         
         const article = await db.query(sql);

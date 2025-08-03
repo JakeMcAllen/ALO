@@ -28,21 +28,28 @@
     "@mui/styles": "^6.3.0",
     "axios": "^1.7.9",
     "canvas": "^3.1.0",
+    "chart.js": "^4.5.0",
     "cookies-next": "^5.0.2",
+    "dayjs": "^1.11.13",
     "dictionary-en": "^4.0.0",
     "embla-carousel-react": "^8.5.2",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.12.0",
     "next": "^15.1.2",
     "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.2",
+    "react-slick": "^0.30.3",
+    "socket.io": "^4.8.1",
     "wordnet": "^2.0.0",
     "wordnet-db": "^3.1.14"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^19",
     "typescript": "^5"
   }
